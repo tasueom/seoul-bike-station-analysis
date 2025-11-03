@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>서울시 따릉이 대여소 분포 분석</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <h1>서울시 따릉이 대여소 분포 분석</h1>
@@ -12,5 +13,34 @@
         <button type="submit">업로드</button>
     </form>
     <a href="https://data.seoul.go.kr/dataList/OA-21235/S/1/datasetView.do" target="_blank">서울시 따릉이 대여소 마스터 정보 내려받기</a>
+
+    {% if gu_data %}
+    <h2>구별 대여소 분포</h2>
+    <canvas id="gu-chart"></canvas>
+    <script>
+        const guData = {{ gu_data | tojson }};
+        const ctx = document.getElementById('gu-chart');
+        const guChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: guData.label,
+                datasets: [{
+                    label: '대여소 분포',
+                    data: guData.value,
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                    borderColor: 'rgba(75, 192, 192)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+    {% endif %}
 </body>
 </html>

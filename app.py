@@ -22,12 +22,16 @@ def upload():
     
     # 결측치 제거
     df = df.dropna(axis=0).reset_index(drop=True)
-    gu_list = df.str.split().str[1]
-    print(gu_list)
     
+    gu_list = df.str.split().str[1]
+    
+    # ~구로 끝나는 주소만 필터링
+    gu_list = gu_list[gu_list.str.endswith('구', na=False)]
+    
+    value_counts = gu_list.value_counts()
     gu_data = {
-        "label": gu_list.unique(),
-        "value": gu_list.value_counts().tolist()
+        "label": value_counts.index.tolist(),
+        "value": value_counts.values.tolist()
     }
     
     return render_template('index.html', gu_data=gu_data)
