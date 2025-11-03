@@ -1,7 +1,24 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')  # Flask 환경에서 GUI 백엔드 사용 방지
+import matplotlib.pyplot as plt
+# 한글 폰트 설정
+plt.rcParams['font.family'] = 'Malgun Gothic'  # Windows
+plt.rcParams['axes.unicode_minus'] = False  # 마이너스 기호 깨짐 방지
+
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
+
+def save_as_image(gu_data):
+    plt.figure(figsize=(10, 5))
+    plt.bar(gu_data['label'], gu_data['value'])
+    plt.xlabel('구')
+    plt.ylabel('대여소 수')
+    plt.title('구별 대여소 분포')
+    plt.xticks(rotation=60, fontsize=8)
+    plt.savefig('seoul_bike_station.png')
+    plt.close()
 
 @app.route('/')
 def index():
@@ -34,6 +51,8 @@ def upload():
         "label": value_counts.index.tolist(),
         "value": value_counts.values.tolist()
     }
+    
+    save_as_image(gu_data)
     
     flash('대여소 분포 분석이 완료되었습니다.')
     return render_template('index.html', gu_data=gu_data)
